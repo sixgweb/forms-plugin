@@ -1,0 +1,13 @@
+scopes:
+  form_id:
+    label: Form
+    modelClass: Sixgweb\Forms\Models\Form
+    conditions: form_id in (:value)
+    nameFrom: name
+  created_at:
+      label: Created
+      type: date
+      conditions:
+          before: created_at <= ':value'
+          between: created_at >= ':after' AND created_at <= ':before'
+          after: created_at >= ':value'

@@ -1,0 +1,11 @@
+<div id="entryContainer">
+    {% if form %}
+        {% if timeout %}
+        {% partial '::timeout.htm' %}
+        {% else %}
+        {% partial '::form.htm' %}
+        {% endif %}
+    {% else %}
+        {% partial '::forms.htm' %}
+    {% endif %}
+</div>

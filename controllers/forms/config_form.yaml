@@ -1,0 +1,31 @@
+# ===================================
+#  Form Behavior Config
+# ===================================
+
+# Record name
+name: Form
+
+# Model Form Field configuration
+form: $/sixgweb/forms/models/form/fields.yaml
+
+# Model Class name
+modelClass: Sixgweb\Forms\Models\Form
+
+# Default redirect location
+defaultRedirect: sixgweb/forms/forms
+
+# Create page
+create:
+    title: backend::lang.form.create_title
+    redirect: sixgweb/forms/forms/update/:id
+    redirectClose: sixgweb/forms/forms
+
+# Update page
+update:
+    title: backend::lang.form.update_title
+    redirect: sixgweb/forms/forms
+    redirectClose: sixgweb/forms/forms
+
+# Preview page
+preview:
+    title: backend::lang.form.preview_title

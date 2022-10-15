@@ -1,0 +1,35 @@
+# ===================================
+#  Form Field Definitions
+# ===================================
+fields:
+    is_enabled:
+        label: Is Enabled
+        type: switch
+        off: No
+        on: Yes
+
+    save_entries:
+        label: Save Entries
+        type: switch
+        off: No
+        on: Yes
+        comment: Save form entries to database
+
+tabs:
+
+    fields:
+
+        name:
+            label: Name
+            tab: Details
+
+        description:
+            label: Description
+            type: richeditor
+            tab: Details
+
+        confirmation:
+            label: Confirmation Message
+            type: richeditor
+            comment: Displayed to user after successful entry
+            tab: Details

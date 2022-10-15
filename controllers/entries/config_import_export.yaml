@@ -1,0 +1,15 @@
+# ===================================
+#  Import/Export Behavior Config
+# ===================================
+
+import:
+    title: Import entries
+    modelClass: Sixgweb\Forms\Models\EntryImport
+    list: $/sixgweb/forms/models/entry/columns.yaml
+    form: $/sixgweb/forms/models/entry/fields_import.yaml
+
+export:
+    title: Export entries
+    modelClass: Sixgweb\Forms\Models\EntryExport
+    list: $/sixgweb/forms/models/entry/columns.yaml
+    form: $/sixgweb/forms/models/entry/fields_export.yaml

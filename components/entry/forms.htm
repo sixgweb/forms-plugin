@@ -1,0 +1,5 @@
+<ul id="formList">
+{% for form in __SELF__.forms() %}
+    <li><a href="{{ this.page.id|page({'slug':form.slug}) }}">{{ form.name }}</a></li>
+{% endfor %}
+</ul>
