@@ -2,3 +2,5 @@
   - First version of Forms
   - create_forms_table.php
   - create_entries_table.php
+1.0.2:
+  - Add readme and license
