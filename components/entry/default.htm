@@ -1,11 +1,14 @@
 <div id="entryContainer">
     {% if form %}
+        {{ form.description|raw }}
         {% if timeout %}
         {% partial '::timeout.htm' %}
         {% else %}
-        {% partial '::form.htm' %}
+        <div id="formContainer">
+            {% partial '::form.htm' %}
+        </div>
         {% endif %}
     {% else %}
-        {% partial '::forms.htm' %}
+        <div class="alert alert-warning">Form not found</div>
     {% endif %}
 </div>

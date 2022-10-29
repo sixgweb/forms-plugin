@@ -1,3 +1,26 @@
 <div class="alert alert-warning text-center">
-    You must wait {{ timeout }} {{ 'second'|str_plural(timeout) }} before you can submit this form again.
+    You must wait <span id="formTimeout">{{ timeout }}</span> <span id="formSeconds">{{ 'second'|str_plural(timeout) }}</span> before you can submit this form again.
 </div>
+
+<script>
+
+(function(){
+
+    let el = document.getElementById('formTimeout');
+    let secEl = document.getElementById('formSeconds');
+    let plural = secEl.innerHTML;
+    let singular = plural.slice(0, -1);
+    let seconds = parseInt(el.innerHTML);
+
+    let countdown = setInterval(function() {
+        seconds--;
+        if (seconds >= 0) {
+            el.innerHTML = seconds;
+            secEl.innerHTML = seconds == 1 ? singular : plural;
+        } else {
+            clearInterval(countdown);
+        }
+    }, 1000);
+
+})();
+</script>

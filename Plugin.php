@@ -3,13 +3,24 @@
 namespace Sixgweb\Forms;
 
 use Backend;
+use Carbon\Carbon;
 use System\Classes\PluginBase;
+use Sixgweb\Forms\Models\Form;
+use Sixgweb\Forms\Models\Entry;
 
 /**
  * Plugin Information File
  */
 class Plugin extends PluginBase
 {
+
+    public $require = [
+        'Sixgweb.Attributize',
+        'Sixgweb.Conditions',
+        'Sixgweb.AttributizeForms',
+        'Sixgweb.ConditionsForms',
+    ];
+
     /**
      * Returns information about this plugin.
      *
@@ -56,18 +67,6 @@ class Plugin extends PluginBase
     }
 
     /**
-     * Undocumented function
-     *
-     * @return array
-     */
-    public function registerMailTemplates(): array
-    {
-        return [
-            'sixgweb.forms::mail.entry',
-        ];
-    }
-
-    /**
      * Registers any backend permissions used by this plugin.
      *
      * @return array
@@ -82,10 +81,6 @@ class Plugin extends PluginBase
             'sixgweb.forms.manage_entries' => [
                 'tab' => 'Forms',
                 'label' => 'Manage Entries'
-            ],
-            'sixgweb.forms.manage_settings' => [
-                'tab' => 'Forms',
-                'label' => 'Manage Settings',
             ],
         ];
     }
@@ -119,31 +114,36 @@ class Plugin extends PluginBase
                         'permissions' => ['sixgweb.forms.manage_entries'],
                         'order'       => 200,
                     ],
-                    'settings' => [
+                    /*'settings' => [
                         'label' => 'Settings',
                         'icon' => 'icon-gear',
                         'url' => Backend::url('sixgweb/forms/settings/update/sixgweb/forms/settings'),
                         'permissions' => ['sixgweb.forms.manage_settings'],
                         'order'       => 300,
-                    ]
+                    ]*/
                 ]
             ],
         ];
     }
 
-    public function registerSettings()
+    /**
+     * Automatically purge entries
+     *
+     * @param object $schedule
+     * @return void
+     */
+    public function registerSchedule($schedule)
     {
-        return [
-            'settings' => [
-                'label'       => 'Forms Settings',
-                'description' => 'Manage forms settings.',
-                'category'    => 'Forms',
-                'icon'        => 'icon-address-card',
-                'class'       => 'Sixgweb\Forms\Models\Settings',
-                'order'       => 500,
-                'keywords'    => 'forms',
-                'permissions' => ['sixgweb.forms.manage_settings']
-            ]
-        ];
+        $schedule->call(function () {
+            foreach (Form::where('purge_entries', 1)->get() as $form) {
+                $olderThan = Carbon::now()->subdays($form->purge_days);
+                $entries = Entry::where('form_id', $form->id)
+                    ->where('created_at', '<=', $olderThan)
+                    ->get();
+                foreach ($entries as $entry) {
+                    $entry->delete();
+                }
+            }
+        })->daily();
     }
 }

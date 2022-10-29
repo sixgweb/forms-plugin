@@ -1,10 +1,7 @@
 {{ form_ajax('onEntry') }}
-<div class="form-group">
-    <label for="email" class="form-label">{{ 'Email'|trans }}</label>
-    <input name="email" id="email" type="email" class="form-control" value="{{ form_value('email', user.email) }}" />
-</div>
 
 {% component 'attributizeFields' %}
+
 {% component 'recaptcha' %}
 
 <button type="submit" class="btn btn-primary" data-attach-loading>{{ 'Submit'|trans }}</button>

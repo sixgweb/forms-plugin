@@ -46,7 +46,12 @@ class Form extends Model
     /**
      * @var array rules for validation
      */
-    public $rules = [];
+    public $rules = [
+        'name' => 'required',
+        'throttle_timeout' => 'required_if:throttle_entries,1',
+        'throttle_threshold' => 'required_if:throttle_entries,1',
+        'purge_days' => 'required_if:purge_entries,1',
+    ];
 
     public $slugs = [
         'slug' => 'name',
@@ -84,7 +89,15 @@ class Form extends Model
      * @var array hasOne and other relations
      */
     public $hasOne = [];
-    public $hasMany = [];
+    public $hasMany = [
+        'entries' => [
+            Entry::class,
+        ],
+        'entries_count' => [
+            Entry::class,
+            'count' => true,
+        ]
+    ];
     public $belongsTo = [];
     public $belongsToMany = [];
     public $morphTo = [];

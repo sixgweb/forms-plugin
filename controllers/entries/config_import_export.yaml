@@ -5,11 +5,12 @@
 import:
     title: Import entries
     modelClass: Sixgweb\Forms\Models\EntryImport
-    list: $/sixgweb/forms/models/entry/columns.yaml
+    list: $/sixgweb/forms/models/entry/columns_import.yaml
     form: $/sixgweb/forms/models/entry/fields_import.yaml
 
 export:
     title: Export entries
     modelClass: Sixgweb\Forms\Models\EntryExport
-    list: $/sixgweb/forms/models/entry/columns.yaml
+    list: $/sixgweb/forms/models/entry/columns_export.yaml
     form: $/sixgweb/forms/models/entry/fields_export.yaml
+    fileName: export-entries

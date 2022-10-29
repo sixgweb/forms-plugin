@@ -6,22 +6,8 @@ fields:
     id:
         label: ID
         disabled: true
-
-    user:
-        label: User
-        type: recordfinder
-        list: ~/plugins/rainlab/user/models/user/columns.yaml
-        recordsPerPage: 10
-        title: Find User
-        prompt: Click the Find button to find a user
-        nameFrom: name
-        descriptionFrom: name
-        
+                
     form:
         label: Form
         type: relation
         emptyOption: -- select form --
-    
-    email:
-        label: Email
-        type: email

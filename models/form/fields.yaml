@@ -2,20 +2,8 @@
 #  Form Field Definitions
 # ===================================
 fields:
-    is_enabled:
-        label: Is Enabled
-        type: switch
-        off: No
-        on: Yes
-
-    save_entries:
-        label: Save Entries
-        type: switch
-        off: No
-        on: Yes
-        comment: Save form entries to database
-
 tabs:
+    cssClass: turtle
 
     fields:
 
@@ -33,3 +21,77 @@ tabs:
             type: richeditor
             comment: Displayed to user after successful entry
             tab: Details
+
+        is_enabled:
+            label: Is Enabled
+            type: switch
+            tab: Settings
+
+        _save_section:
+            type: section
+            label: Saving
+            tab: Settings
+            spanClass: bg-light border border-bottom-0 pt-3 px-4
+
+        save_entries:
+            label: Save Entries
+            type: checkbox
+            tab: Settings
+            comment: Save form entries to database
+            spanClass: bg-light border-start border-end px-4
+        
+        purge_entries:
+            label: Purge Entries
+            type: checkbox
+            tab: Settings
+            comment: Remove entries from the database, after a certain number of days.
+            spanClass: bg-light border-start border-end px-4
+
+        purge_days:
+            label: Days to Keep Entries
+            type: number
+            tab: Settings
+            spanClass: bg-light border border-top-0  px-4
+            comment: Number of days to keep entries in the database.  Older entries will be deleted. Minimum 1
+            default: 7
+            min: 1
+            trigger:
+                field: purge_entries
+                condition: checked
+                action: enable
+
+        _throttle_section:
+            type: section
+            label: Throttling
+            tab: Settings
+            spanClass: bg-light border border-bottom-0 pt-3 px-4 mt-4
+
+        throttle_entries:
+            label: Throttle Entries
+            type: checkbox
+            tab: Settings
+            spanClass: bg-light border-start border-end px-4
+            comment: Force the visitor to wait before submitting the form again.
+
+        throttle_timeout:
+            label: Throttle Timeout
+            type: number
+            comment: Seconds required before form can be submitted again.
+            default: 3600
+            tab: Settings
+            spanClass: bg-light border-start border-end px-4
+            trigger:
+                field: throttle_entries
+                condition: checked
+                action: enable
+            
+        throttle_threshold:
+            label: Timeout Threshold
+            type: number
+            comment: Number of submissions allowed before timeout enforced
+            tab: Settings
+            spanClass: bg-light border border-top-0  px-4
+            trigger:
+                field: throttle_entries
+                condition: checked
+                action: enable

@@ -2,6 +2,7 @@
 
 namespace Sixgweb\Forms\Controllers;
 
+use Backend\Behaviors\ImportExportController;
 use BackendMenu;
 use Backend\Classes\Controller;
 
@@ -37,7 +38,21 @@ class Entries extends Controller
     public function __construct()
     {
         parent::__construct();
-
         BackendMenu::setContext('Sixgweb.Forms', 'forms', 'entries');
+    }
+
+    public function export()
+    {
+        $behavior = $this->asExtension('ImportExportController');
+        if (get('uselist', false)) {
+            $behavior->setConfig([
+                'export' => [
+                    'useList' => [
+                        'raw' => true,
+                    ]
+                ]
+            ]);
+        }
+        return $behavior->export();
     }
 }

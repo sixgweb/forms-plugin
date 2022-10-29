@@ -28,8 +28,6 @@ class Entry extends Model
      */
     protected $fillable = [
         'form_id',
-        'email',
-        'user_id',
     ];
 
     protected $purgeable = [];
@@ -39,7 +37,6 @@ class Entry extends Model
      */
     public $rules = [
         'form_id' => 'required',
-        'email' => 'required|email',
     ];
 
     /**
@@ -78,10 +75,6 @@ class Entry extends Model
     public $belongsTo = [
         'form' => [
             FormModel::class,
-        ],
-        'user' =>
-        [
-            \RainLab\User\Models\User::class,
         ]
     ];
     public $belongsToMany = [];

@@ -5,12 +5,10 @@
 fields:
     timeout:
         label: Timeout
-        span: left
         comment: Seconds a user must wait between submissions
         default: 3600
         
     timeout_threshold:
         label: Timeout Threshold
         type: number
-        span: left
         comment: Number of submissions allowed before timeout enforced

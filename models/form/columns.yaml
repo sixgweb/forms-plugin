@@ -17,3 +17,10 @@ columns:
     save_entries:
         label: Save Entries
         type: switch
+
+    entries_count:
+        label: Entries
+        relation: entries_count
+        valueFrom: count
+        default: 0
+        sortable: false

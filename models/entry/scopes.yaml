@@ -1,9 +1,11 @@
 scopes:
   form_id:
     label: Form
+    type: group
     modelClass: Sixgweb\Forms\Models\Form
     conditions: form_id in (:value)
     nameFrom: name
+    
   created_at:
       label: Created
       type: date

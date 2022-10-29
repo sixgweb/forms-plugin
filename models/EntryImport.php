@@ -7,6 +7,8 @@ use Sixgweb\Forms\Models\Form as FormModel;
 
 class EntryImport extends \Backend\Models\ImportModel
 {
+    use \Sixgweb\Attributize\Traits\ImportsFieldValues;
+
     /**
      * @var array The rules to be applied to the data.
      */
@@ -25,6 +27,9 @@ class EntryImport extends \Backend\Models\ImportModel
     public function importData($results, $sessionKey = null)
     {
         foreach ($results as $row => $data) {
+
+            //Additional step to convert field_values to array
+            $data = $this->processImportDataFieldValues($data);
 
             try {
                 $entry = new Entry;

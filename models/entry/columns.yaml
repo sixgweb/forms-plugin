@@ -13,10 +13,6 @@ columns:
         valueFrom: name
         searchable: true
 
-    email:
-        label: Email
-        searchable: true
-
     created_at:
         label: Created
         type: datetime

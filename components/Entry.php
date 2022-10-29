@@ -5,12 +5,8 @@ namespace Sixgweb\Forms\Components;
 use Auth;
 use Event;
 use Session;
-use Validator;
-use ValidationException;
 use Cms\Classes\ComponentBase;
 use Sixgweb\Forms\Models\Form;
-use Sixgweb\Forms\Models\Settings;
-use October\Rain\Database\ModelException;
 use Sixgweb\Forms\Models\Entry as EntryModel;
 
 /**
@@ -19,6 +15,7 @@ use Sixgweb\Forms\Models\Entry as EntryModel;
 class Entry extends ComponentBase
 {
     const CONTAINERID = 'entryContainer';
+    const FORMCONTAINERID = 'formContainer';
 
     protected $form;
     protected $entry;
@@ -33,7 +30,13 @@ class Entry extends ComponentBase
 
     public function defineProperties()
     {
-        return [];
+        return [
+            'form' => [
+                'label' => 'Form',
+                'type' => 'dropdown',
+                'options' => Form::lists('name', 'slug'),
+            ]
+        ];
     }
 
     public function init()
@@ -67,7 +70,7 @@ class Entry extends ComponentBase
             return false;
         }
 
-        Event::fire('sixgweb.forms.beforeSave', [$entry]);
+        Event::fire('sixgweb.forms.beforeEntry', [$entry]);
         if ($this->form->save_entries) {
             $entry->save();
         }
@@ -77,9 +80,9 @@ class Entry extends ComponentBase
         Session::put($key . '.entries', $count + 1);
         Session::put($key . '.time', time());
 
-        Event::fire('sixgweb.forms.afterSave', [$entry]);
+        Event::fire('sixgweb.forms.afterEntry', [$entry]);
 
-        return ['#' . self::CONTAINERID => $this->form->confirmation];
+        return ['#' . self::FORMCONTAINERID => $this->form->confirmation];
     }
 
     public function forms()
@@ -89,10 +92,10 @@ class Entry extends ComponentBase
 
     public function getForm()
     {
-        $slug = $this->param('slug');
+        $slug = $this->property('form');
 
         //If no Forms found, fall back to false.  Otherwise, memoization if pointless on null.
-        return $this->form ?? $this->form = Form::where('slug', $slug)->first() ?? false;
+        return $this->form ?? $this->form = Form::where('slug', $slug)->enabled()->first() ?? false;
     }
 
     public function getEntry()
@@ -105,11 +108,15 @@ class Entry extends ComponentBase
 
     public function getTimeout()
     {
-        $seconds = Settings::get('timeout');
-        $threshold = Settings::get('timeout_threshold');
-        $form = $this->getForm();
+        if (!$form = $this->getForm()) {
+            return;
+        }
 
-        if (!$seconds || !$threshold || !$form) {
+        $seconds = $form->throttle_timeout;
+        $threshold = $form->throttle_threshold;
+
+        if (!$form->throttle_entries || !$seconds || !$threshold) {
+            Session::forget('sixgweb.forms.' . $form->id);
             return false;
         }
 
