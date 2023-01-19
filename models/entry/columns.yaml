@@ -10,8 +10,7 @@ columns:
     form:
         label: Form
         relation: form
-        valueFrom: name
-        searchable: true
+        select: name
 
     created_at:
         label: Created

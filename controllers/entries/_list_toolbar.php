@@ -7,16 +7,20 @@
         <?= e(trans('backend::lang.list.delete_selected')) ?>
     </button>
 
-    <a href="<?= Backend::url('sixgweb/forms/entries/export?uselist=1') ?>" class="btn btn-secondary oc-icon-download pull-right">
-        Download Results
-    </a>
-
-    <a href="<?= Backend::url('sixgweb/forms/entries/export') ?>" class="btn btn-secondary oc-icon-download pull-right">
+    <a href="<?= Backend::url('sixgweb/forms/entries/export') ?>" class="btn btn-secondary oc-icon-download ">
         Export
     </a>
 
-    <a href="<?= Backend::url('sixgweb/forms/entries/import') ?>" class="btn btn-secondary oc-icon-upload pull-right">
+    <a href="<?= Backend::url('sixgweb/forms/entries/import') ?>" class="btn btn-secondary oc-icon-upload ">
         Import
+    </a>
+
+    <a href="<?= Backend::url('sixgweb/forms/entries/export?uselist=1') ?>" class="btn btn-secondary oc-icon-download ">
+        Download Results
+    </a>
+
+    <a href="https://sixgweb.github.io/oc-plugin-documentation/forms/usage/entries-controller.html" target="_blank" class="btn btn-secondary oc-icon-question">
+        Help
     </a>
 
 </div>

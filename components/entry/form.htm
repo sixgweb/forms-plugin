@@ -1,9 +1,11 @@
-{{ form_ajax('onEntry') }}
+{{ form_ajax(__SELF__.alias ~ '::onEntry') }}
 
-{% component 'attributizeFields' %}
+{% component 'entryFields' %}
 
-{% component 'recaptcha' %}
+{% component 'formsPurchasize' %}
 
-<button type="submit" class="btn btn-primary" data-attach-loading>{{ 'Submit'|trans }}</button>
+{% component 'recaptchaEntry' %}
+
+<button type="submit" class="btn btn-primary">{{ 'Submit'|trans }}</button>
 
 {{ form_close() }}

@@ -29,3 +29,8 @@ update:
 # Preview page
 preview:
     title: backend::lang.form.preview_title
+
+permissions:
+    modelCreate: sixgweb.forms.manage_forms.create
+    modelUpdate: sixgweb.forms.manage_forms.update
+    modelDelete: sixgweb.forms.manage_forms.delete

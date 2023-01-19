@@ -7,6 +7,8 @@ use Sixgweb\Forms\Models\Form as FormModel;
 
 class EntryExport extends \Backend\Models\ExportModel
 {
+    use \Sixgweb\Attributize\Traits\ExportsFieldValues;
+
     public $fillable = [
         'ExportOptions[form]',
     ];
@@ -19,12 +21,37 @@ class EntryExport extends \Backend\Models\ExportModel
 
     public function exportData($columns, $sessionKey = null)
     {
-        $entries = Entry::all();
+        $formId = post('ExportOptions.form');
+        $entries = $formId ? Entry::where('form_id', $formId)->get() : Entry::all();
+        $results = [];
 
-        $entries->each(function ($entry) use ($columns) {
-            //$entry->addVisible($columns);
-        });
+        foreach ($entries as &$entry) {
+            //Default data to entry array values, ignoring columns
+            $data = $entry->toArray();
+            foreach ($columns as $column) {
+                $relation = strpos($column, 'field_values.') !== false
+                    ? str_replace('.', '_', $column)
+                    : null;
 
-        return $entries->toArray();
+                if ($relation && $entry->hasRelation($relation) && $entry->{$relation}) {
+                    $type = $entry->getRelationType($relation);
+                    switch ($type) {
+                        case 'attachOne':
+                            $data[$column] = $entry->{$relation}->getPath();
+                            break;
+                        case 'attachMany':
+                            $attachments = $entry->{$relation}->toArray();
+                            $data[$column] = implode("\r\n", array_pluck($attachments, 'path'));
+                            break;
+                        default:
+                            $data[$column] = $entry->{$relation};
+                            break;
+                    }
+                }
+            }
+            $results[] = $data;
+        }
+
+        return $this->processExportDataFieldValues($results, $columns);
     }
 }

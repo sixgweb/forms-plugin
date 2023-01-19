@@ -1,4 +1,6 @@
-<?php namespace Sixgweb\Forms\Controllers;
+<?php
+
+namespace Sixgweb\Forms\Controllers;
 
 use BackendMenu;
 use Backend\Classes\Controller;
@@ -22,6 +24,8 @@ class Forms extends Controller
      * @var string listConfig file
      */
     public $listConfig = 'config_list.yaml';
+
+    public $requiredPermissions = ['sixgweb.forms.manage_forms'];
 
     /**
      * __construct the controller

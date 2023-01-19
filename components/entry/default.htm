@@ -1,10 +1,10 @@
-<div id="entryContainer">
+<div id="{{ __SELF__.getEntryContainerId() }}" class="forms-entry-container">
     {% if form %}
         {{ form.description|raw }}
         {% if timeout %}
         {% partial '::timeout.htm' %}
         {% else %}
-        <div id="formContainer">
+        <div id="{{ __SELF__.getFormContainerId() }}" class="forms-form-container">
             {% partial '::form.htm' %}
         </div>
         {% endif %}

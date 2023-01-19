@@ -14,8 +14,12 @@ columns:
         label: Is Enabled
         type: switch
 
-    save_entries:
+    settings[save_entries]:
         label: Save Entries
+        type: switch
+
+    settings[purge_entries]:
+        label: Purge Entries
         type: switch
 
     entries_count:

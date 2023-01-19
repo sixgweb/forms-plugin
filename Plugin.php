@@ -62,7 +62,7 @@ class Plugin extends PluginBase
     public function registerComponents(): array
     {
         return [
-            'Sixgweb\Forms\Components\Entry' => 'Entry',
+            'Sixgweb\Forms\Components\Entry' => 'formsEntry',
         ];
     }
 
@@ -78,10 +78,35 @@ class Plugin extends PluginBase
                 'tab' => 'Forms',
                 'label' => 'Manage Forms'
             ],
+            'sixgweb.forms.manage_forms.create' => [
+                'tab' => 'Forms',
+                'label' => 'Create Forms'
+            ],
+            'sixgweb.forms.manage_forms.update' => [
+                'tab' => 'Forms',
+                'label' => 'Update Forms'
+            ],
+            'sixgweb.forms.manage_forms.delete' => [
+                'tab' => 'Forms',
+                'label' => 'Delete Forms'
+            ],
             'sixgweb.forms.manage_entries' => [
                 'tab' => 'Forms',
                 'label' => 'Manage Entries'
             ],
+            'sixgweb.forms.manage_entries.create' => [
+                'tab' => 'Forms',
+                'label' => 'Create Entries'
+            ],
+            'sixgweb.forms.manage_entries.update' => [
+                'tab' => 'Forms',
+                'label' => 'Update Entries'
+            ],
+            'sixgweb.forms.manage_entries.delete' => [
+                'tab' => 'Forms',
+                'label' => 'Delete Entries'
+            ],
+
         ];
     }
 
@@ -135,7 +160,7 @@ class Plugin extends PluginBase
     public function registerSchedule($schedule)
     {
         $schedule->call(function () {
-            foreach (Form::where('purge_entries', 1)->get() as $form) {
+            foreach (Form::where('settings->purge_entries', 1)->get() as $form) {
                 $olderThan = Carbon::now()->subdays($form->purge_days);
                 $entries = Entry::where('form_id', $form->id)
                     ->where('created_at', '<=', $olderThan)

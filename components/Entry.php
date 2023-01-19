@@ -3,8 +3,10 @@
 namespace Sixgweb\Forms\Components;
 
 use Auth;
+use Queue;
 use Event;
 use Session;
+use Redirect;
 use Cms\Classes\ComponentBase;
 use Sixgweb\Forms\Models\Form;
 use Sixgweb\Forms\Models\Entry as EntryModel;
@@ -14,9 +16,6 @@ use Sixgweb\Forms\Models\Entry as EntryModel;
  */
 class Entry extends ComponentBase
 {
-    const CONTAINERID = 'entryContainer';
-    const FORMCONTAINERID = 'formContainer';
-
     protected $form;
     protected $entry;
 
@@ -32,10 +31,10 @@ class Entry extends ComponentBase
     {
         return [
             'form' => [
-                'label' => 'Form',
+                'title' => 'Form',
                 'type' => 'dropdown',
                 'options' => Form::lists('name', 'slug'),
-            ]
+            ],
         ];
     }
 
@@ -50,8 +49,12 @@ class Entry extends ComponentBase
         $this->page['form'] = $this->getForm();
         $this->page['entry'] = $this->getEntry();
         $this->page['timeout'] = $this->getTimeout();
-        $this->page['containerID'] = self::CONTAINERID;
         $this->page->title = $this->page['form']['name'] ?? 'Form Not Found';
+    }
+
+    public function onRefreshForm()
+    {
+        return $this->renderPartial('::form');
     }
 
     public function onEntry()
@@ -62,7 +65,6 @@ class Entry extends ComponentBase
 
         $data = post();
         $data['form_id'] = $this->form->id;
-        $data['user_id'] = Auth::id();
         $entry = $this->getEntry();
         $entry->fill($data);
 
@@ -71,9 +73,8 @@ class Entry extends ComponentBase
         }
 
         Event::fire('sixgweb.forms.beforeEntry', [$entry]);
-        if ($this->form->save_entries) {
-            $entry->save();
-        }
+
+        $entry->save();
 
         $key = 'sixgweb.forms.' . $this->form->id;
         $count = Session::get($key . '.entries', 0);
@@ -82,7 +83,19 @@ class Entry extends ComponentBase
 
         Event::fire('sixgweb.forms.afterEntry', [$entry]);
 
-        return ['#' . self::FORMCONTAINERID => $this->form->confirmation];
+        /**
+         * Notify requires an existing model to process.
+         * Instead of conditionally saving, we'll conditionally delete.
+         */
+        if (!$this->form->settings['save_entries']) {
+            $entry->delete();
+        }
+
+        if ($this->form->settings['redirect'] ?? null) {
+            return Redirect::to($this->form->settings['redirect']);
+        }
+
+        return ['#' . $this->getFormContainerId() => $this->form->confirmation];
     }
 
     public function forms()
@@ -112,10 +125,10 @@ class Entry extends ComponentBase
             return;
         }
 
-        $seconds = $form->throttle_timeout;
-        $threshold = $form->throttle_threshold;
+        $seconds = $form->settings['throttle_timeout'];
+        $threshold = $form->settings['throttle_threshold'];
 
-        if (!$form->throttle_entries || !$seconds || !$threshold) {
+        if (!$form->settings['throttle_entries'] || !$seconds || !$threshold) {
             Session::forget('sixgweb.forms.' . $form->id);
             return false;
         }
@@ -133,5 +146,15 @@ class Entry extends ComponentBase
         }
 
         return false;
+    }
+
+    public function getEntryContainerId()
+    {
+        return $this->alias . 'EntryContainer';
+    }
+
+    public function getFormContainerId()
+    {
+        return $this->alias . 'FormContainer';
     }
 }
