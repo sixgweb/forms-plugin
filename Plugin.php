@@ -17,8 +17,6 @@ class Plugin extends PluginBase
     public $require = [
         'Sixgweb.Attributize',
         'Sixgweb.Conditions',
-        'Sixgweb.AttributizeForms',
-        'Sixgweb.ConditionsForms',
     ];
 
     /**

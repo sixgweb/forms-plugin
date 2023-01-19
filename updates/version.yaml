@@ -9,3 +9,5 @@
   - add_settings_to_forms_table.php
   - migrate_to_settings_column.php
   - remove_unused_columns.php
+1.0.4:
+  - update plugin require
