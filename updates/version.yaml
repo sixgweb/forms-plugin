@@ -11,3 +11,5 @@
   - remove_unused_columns.php
 1.0.4:
   - update plugin require
+1.0.5:
+  - use preview for entries
