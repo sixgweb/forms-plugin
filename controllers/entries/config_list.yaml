@@ -12,7 +12,7 @@ modelClass: Sixgweb\Forms\Models\Entry
 title: Manage Entries
 
 # Link URL for each record
-recordUrl: sixgweb/forms/entries/update/:id
+recordUrl: sixgweb/forms/entries/preview/:id
 
 # Message to display if the list is empty
 noRecordsMessage: backend::lang.list.no_records
