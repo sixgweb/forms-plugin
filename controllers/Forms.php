@@ -4,6 +4,7 @@ namespace Sixgweb\Forms\Controllers;
 
 use BackendMenu;
 use Backend\Classes\Controller;
+use Sixgweb\Conditions\Classes\ConditionersManager;
 
 /**
  * Forms Backend Controller
@@ -35,5 +36,6 @@ class Forms extends Controller
         parent::__construct();
 
         BackendMenu::setContext('Sixgweb.Forms', 'forms', 'forms');
+        ConditionersManager::instance()->addConditionerGroup('Form', 'Sixgweb\Forms\Models\Form');
     }
 }

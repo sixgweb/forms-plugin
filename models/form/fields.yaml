@@ -2,7 +2,6 @@
 #  Form Field Definitions
 # ===================================
 tabs:
-
     fields:            
         name:
             label: Name
@@ -90,3 +89,9 @@ tabs:
                                 field: throttle_entries
                                 condition: checked
                                 action: show
+
+        _fields:
+            type: attributize
+            title: Entry Field
+            fieldableType: Sixgweb\Forms\Models\Entry
+            tab: Fields

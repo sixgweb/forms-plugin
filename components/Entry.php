@@ -41,6 +41,18 @@ class Entry extends ComponentBase
     public function init()
     {
         $this->prepareVars();
+        $this->controller->bindEvent('page.initComponents', function ($controller) {
+            if (!$this->controller->findComponentByHandler('onRefreshAttributizeFields')) {
+                $entryFields = $this->addComponent(
+                    'Sixgweb\Forms\Components\Fields',
+                    'entryFields',
+                    []
+                );
+
+                $entryFields->bindModel($this->getEntry());
+                $entryFields->createFormWidget();
+            }
+        });
     }
 
     public function prepareVars()

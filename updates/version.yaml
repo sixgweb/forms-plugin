@@ -13,3 +13,5 @@
   - update plugin require
 1.0.5:
   - use preview for entries
+1.0.6:
+  - Move attributize/conditions integrations to forms plugin

@@ -1,7 +1,7 @@
 {
     "name": "sixgweb/forms-plugin",
     "type": "october-plugin",
-    "description": "No description provided yet...",
+    "description": "Frontend/Backend form builder for OctoberCMS that utilizes Sixgweb.Attributize and Sixgweb.Conditions plugins",
     "require": {
         "composer/installers": "~1.0"
     }

@@ -2,11 +2,18 @@
 
 namespace Sixgweb\Forms;
 
+use Event;
 use Backend;
 use Carbon\Carbon;
 use System\Classes\PluginBase;
 use Sixgweb\Forms\Models\Form;
 use Sixgweb\Forms\Models\Entry;
+use Sixgweb\Forms\Classes\Helper;
+use Sixgweb\Forms\Controllers\Forms;
+use Sixgweb\Forms\Classes\EventHandler;
+use Sixgweb\Conditions\Classes\ConditionersManager;
+use Sixgweb\Forms\Classes\ConditionableEventHandler;
+use Sixgweb\Forms\Classes\ConditionerEventHandler;
 
 /**
  * Plugin Information File
@@ -50,6 +57,7 @@ class Plugin extends PluginBase
      */
     public function boot()
     {
+        $this->addEventSubscribers();
     }
 
     /**
@@ -61,6 +69,7 @@ class Plugin extends PluginBase
     {
         return [
             'Sixgweb\Forms\Components\Entry' => 'formsEntry',
+            'Sixgweb\Forms\Components\Fields' => 'entryFields',
         ];
     }
 
@@ -137,14 +146,21 @@ class Plugin extends PluginBase
                         'permissions' => ['sixgweb.forms.manage_entries'],
                         'order'       => 200,
                     ],
-                    /*'settings' => [
-                        'label' => 'Settings',
-                        'icon' => 'icon-gear',
-                        'url' => Backend::url('sixgweb/forms/settings/update/sixgweb/forms/settings'),
-                        'permissions' => ['sixgweb.forms.manage_settings'],
-                        'order'       => 300,
-                    ]*/
                 ]
+            ],
+        ];
+    }
+
+    /**
+     * Register entryFieldValuesToHTML for use in twig
+     *
+     * @return void
+     */
+    public function registerMarkupTags()
+    {
+        return [
+            'functions' => [
+                'entryFieldValuesToHTML' => [Helper::class, 'entryFieldValuesToHTML'],
             ],
         ];
     }
@@ -168,5 +184,12 @@ class Plugin extends PluginBase
                 }
             }
         })->daily();
+    }
+
+    protected function addEventSubscribers()
+    {
+        Event::subscribe(EventHandler::class);
+        Event::subscribe(ConditionableEventHandler::class);
+        Event::subscribe(ConditionerEventHandler::class);
     }
 }
