@@ -15,3 +15,5 @@
   - use preview for entries
 1.0.6:
   - Move attributize/conditions integrations to forms plugin
+1.0.7:
+  - Automatically add fields component and inherit field component properties in entry component

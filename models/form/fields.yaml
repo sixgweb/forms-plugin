@@ -30,31 +30,31 @@ tabs:
             form:
                 secondaryTabs:
                     icons:
-                        Submission Settings: bi bi-cloud-arrow-up
-                        Save Settings: bi bi-save
-                        Throttle Settings: bi bi-hourglass-bottom
+                        Submitting: bi bi-cloud-arrow-up
+                        Saving: bi bi-save
+                        Throttling: bi bi-hourglass-bottom
                     fields:
                         redirect:
                             label: Submission Redirect URL
                             comment: URL (Absolute/Relative) to redirect to after submission.  Leave blank to show form confirmation message.
-                            tab: Submission Settings
+                            tab: Submitting
 
                         save_entries:
                             label: Save Entries
-                            type: checkbox
-                            tab: Save Settings
+                            type: switch
+                            tab: Saving
                             comment: Save form entries to database
                         
                         purge_entries:
                             label: Purge Entries
-                            type: checkbox
-                            tab: Save Settings
+                            type: switch
+                            tab: Saving
                             comment: Remove entries from the database, after a certain number of days.
 
                         purge_days:
                             label: Days to Keep Entries
                             type: number
-                            tab: Save Settings
+                            tab: Saving
                             comment: Number of days to keep entries in the database.  Older entries will be deleted. Minimum 1
                             default: 7
                             min: 1
@@ -65,8 +65,8 @@ tabs:
 
                         throttle_entries:
                             label: Throttle Entries
-                            type: checkbox
-                            tab: Throttle Settings
+                            type: switch
+                            tab: Throttling
                             comment: Force the visitor to wait before submitting the form again.
 
                         throttle_timeout:
@@ -74,7 +74,7 @@ tabs:
                             type: number
                             comment: Seconds required before form can be submitted again.
                             default: 3600
-                            tab: Throttle Settings
+                            tab: Throttling
                             trigger:
                                 field: throttle_entries
                                 condition: checked
@@ -84,14 +84,23 @@ tabs:
                             label: Throttle Threshold
                             type: number
                             comment: Number of submissions allowed before timeout enforced
-                            tab: Throttle Settings
+                            tab: Throttling
+                            default: 1
                             trigger:
                                 field: throttle_entries
                                 condition: checked
                                 action: show
+        _fields_hint:
+            type: hint
+            mode: info
+            label: Field Editor
+            comment: Field editor available after creating form
+            tab: Fields
+            context: create
 
         _fields:
             type: attributize
             title: Entry Field
             fieldableType: Sixgweb\Forms\Models\Entry
             tab: Fields
+            context: update

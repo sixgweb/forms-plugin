@@ -16,6 +16,7 @@ class CreateEntriesTable extends Migration
         Schema::create('sixgweb_forms_entries', function (Blueprint $table) {
             $table->id();
             $table->integer('form_id');
+            $table->json('field_values')->nullable();
             $table->timestamps();
         });
     }

@@ -69,7 +69,6 @@ class Plugin extends PluginBase
     {
         return [
             'Sixgweb\Forms\Components\Entry' => 'formsEntry',
-            'Sixgweb\Forms\Components\Fields' => 'entryFields',
         ];
     }
 

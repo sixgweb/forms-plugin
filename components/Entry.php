@@ -10,6 +10,7 @@ use Redirect;
 use Cms\Classes\ComponentBase;
 use Sixgweb\Forms\Models\Form;
 use Sixgweb\Forms\Models\Entry as EntryModel;
+use Sixgweb\Conditions\Classes\ConditionersManager;
 
 /**
  * Form Component
@@ -18,6 +19,7 @@ class Entry extends ComponentBase
 {
     protected $form;
     protected $entry;
+    protected $entryFields;
 
     public function componentDetails()
     {
@@ -29,30 +31,74 @@ class Entry extends ComponentBase
 
     public function defineProperties()
     {
+        $fields = new \Sixgweb\Attributize\Components\Fields;
         return [
             'form' => [
                 'title' => 'Form',
                 'type' => 'dropdown',
                 'options' => Form::lists('name', 'slug'),
             ],
-        ];
+        ] + $fields->defineProperties();
     }
 
     public function init()
     {
         $this->prepareVars();
-        $this->controller->bindEvent('page.initComponents', function ($controller) {
-            if (!$this->controller->findComponentByHandler('onRefreshAttributizeFields')) {
-                $entryFields = $this->addComponent(
-                    'Sixgweb\Forms\Components\Fields',
-                    'entryFields',
-                    []
-                );
+        $this->entryFields = $this->addComponent(
+            'Sixgweb\Attributize\Components\Fields',
+            'entryFields',
+            $this->getProperties(),
+        );
+        $this->entryFields->bindModel($this->getEntry());
+        $this->entryFields->createFormWidget();
+    }
 
-                $entryFields->bindModel($this->getEntry());
-                $entryFields->createFormWidget();
-            }
-        });
+    /**
+     * Workaround since OCMS doesn't use methodExists in onInspectableGetOptions
+     *
+     * @return array
+     */
+    public function getCodesOptions(): array
+    {
+        if ($form = $this->getForm()) {
+            //ConditionersManager::instance()->addConditioner($form);
+        }
+
+        $entry = new EntryModel;
+        $fields = $entry->getFieldableFields();
+        return $fields->pluck('name', 'code')->toArray();
+    }
+
+    /**
+     * Workaround since OCMS doesn't use methodExists in onInspectableGetOptions
+     *
+     * @return array
+     */
+    public function getTabsOptions(): array
+    {
+        if ($form = $this->getForm()) {
+            //ConditionersManager::instance()->addConditioner($form);
+        }
+
+        $entry = new EntryModel;
+        $fields = $entry->getFieldableFields();
+        return $fields->pluck('tab', 'tab')->toArray();
+    }
+
+
+    public function getEntryComponentAlias()
+    {
+        if ($this->entryComponentAlias) {
+            return $this->entryComponentAlias;
+        }
+
+        if ($component = $this->controller->findComponentByHandler('onRefreshAttributizeFields')) {
+            $this->entryComponentAlias = $component->alias;
+        } else {
+            $this->entryComponentAlias = 'entryFields';
+        }
+
+        return $this->entryComponentAlias;
     }
 
     public function prepareVars()

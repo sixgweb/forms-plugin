@@ -26,6 +26,7 @@ class CreateFormsTable extends Migration
             $table->integer('throttle_threshold')->unsigned()->nullable();
             $table->boolean('purge_entries')->default(0);
             $table->integer('purge_days')->unsigned()->nullable();
+            $table->json('conditions')->nullable();
             $table->timestamps();
         });
     }
