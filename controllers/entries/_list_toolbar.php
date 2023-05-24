@@ -15,7 +15,7 @@
         Import
     </a>
 
-    <a href="<?= Backend::url('sixgweb/forms/entries/export?uselist=1') ?>" class="btn btn-secondary oc-icon-download ">
+    <a href="<?= Backend::url('sixgweb/forms/entries/export?uselist=1') ?>" class="btn btn-secondary oc-icon-download" data-turbo="false">
         Download Results
     </a>
 

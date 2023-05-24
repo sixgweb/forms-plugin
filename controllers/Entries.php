@@ -38,6 +38,18 @@ class Entries extends Controller
     public function __construct()
     {
         parent::__construct();
+        $behavior = $this->asExtension('ImportExportController');
+        if (get('uselist', false)) {
+            $config = $behavior->getConfig('export');
+            $behavior->setConfig([
+                'export' => [
+                    'useList' => [
+                        'raw' => true,
+                    ],
+                    'fileName' => $config['fileName'] ?? 'export',
+                ]
+            ]);
+        }
         BackendMenu::setContext('Sixgweb.Forms', 'forms', 'entries');
     }
 
@@ -45,11 +57,13 @@ class Entries extends Controller
     {
         $behavior = $this->asExtension('ImportExportController');
         if (get('uselist', false)) {
+            $config = $behavior->getConfig('export');
             $behavior->setConfig([
                 'export' => [
                     'useList' => [
                         'raw' => true,
-                    ]
+                    ],
+                    'fileName' => $config['fileName'] ?? 'export',
                 ]
             ]);
         }

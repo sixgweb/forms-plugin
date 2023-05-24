@@ -139,7 +139,9 @@ class Entry extends ComponentBase
         Session::put($key . '.entries', $count + 1);
         Session::put($key . '.time', time());
 
-        Event::fire('sixgweb.forms.afterEntry', [$entry]);
+        if ($entry->id) {
+            Event::fire('sixgweb.forms.afterEntry', [$entry]);
+        }
 
         /**
          * Notify requires an existing model to process.
