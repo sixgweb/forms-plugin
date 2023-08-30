@@ -57,7 +57,7 @@ class Plugin extends PluginBase
      */
     public function boot()
     {
-        if (class_exists(EventHandler::class) && class_exists(EventHandler::class)) {
+        if (class_exists(EventHandler::class) && class_exists(ConditionerEventHandler::class)) {
             $this->addEventSubscribers();
         }
     }

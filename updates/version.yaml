@@ -26,3 +26,5 @@
   - Add check for attributize/conditions event listeners
 1.0.11:
   - Add license to composer.json
+1.0.12:
+  - Update boot class exists check
