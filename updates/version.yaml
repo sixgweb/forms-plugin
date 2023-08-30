@@ -22,3 +22,5 @@
   - add_ip_address_to_entries_table.php
 1.0.9:
   - Remove Attributize/Conditions from composer.json
+1.0.10:
+  - Add check for attributize/conditions event listeners
