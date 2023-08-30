@@ -20,3 +20,5 @@
 1.0.8:
   - Add IP Address to entries table
   - add_ip_address_to_entries_table.php
+1.0.9:
+  - Remove Attributize/Conditions from composer.json
