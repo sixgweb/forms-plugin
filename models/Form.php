@@ -112,4 +112,23 @@ class Form extends Model
     {
         $query->where('is_enabled', 1);
     }
+
+    public function filterFields($fields, $context = null)
+    {
+        if (isset($fields->save_entries)) {
+            $saveEntries = post($fields->save_entries->getName(), $fields->save_entries->value);
+            if ($saveEntries == 0) {
+                $fields->purge_entries->value = 0;
+                $fields->purge_entries->disabled = 1;
+                $fields->purge_days->disabled = 1;
+            } else {
+                $fields->purge_entries->disabled = 0;
+            }
+        }
+
+        if (isset($fields->purge_entries)) {
+            $purgeEntries = post($fields->purge_entries->getName(), $fields->purge_entries->value);
+            $fields->purge_days->disabled = $purgeEntries == 0;
+        }
+    }
 }

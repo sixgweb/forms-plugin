@@ -2,94 +2,149 @@
 #  Form Field Definitions
 # ===================================
 tabs:
-    fields:            
+    fields:
+        is_enabled:
+            label: sixgweb.forms::lang.form.is_enabled
+            type: switch
+            tab: sixgweb.forms::lang.form.tabs.details
+   
         name:
-            label: Name
-            tab: Details
+            label: sixgweb.forms::lang.form.name
+            tab: sixgweb.forms::lang.form.tabs.details
 
         description:
-            label: Description
+            label: sixgweb.forms::lang.form.description
             type: richeditor
-            tab: Details
+            tab: sixgweb.forms::lang.form.tabs.details
 
         confirmation:
-            label: Confirmation Message
+            label: sixgweb.forms::lang.form.confirmation_message
             type: richeditor
-            comment: Displayed to user after successful entry
-            tab: Details
+            comment: sixgweb.forms::lang.form.confirmation_message_description
+            tab: sixgweb.forms::lang.form.tabs.details
+            trigger:
+                field: settings[redirect]
+                action: show
+                condition: value[]
 
-        is_enabled:
-            label: Is Enabled
-            type: switch
-            tab: Settings
+        _confirmation_hidden:
+            label: sixgweb.forms::lang.form.confirmation_message
+            type: hint
+            comment: sixgweb.forms::lang.form.confirmation_message_hidden
+            tab: sixgweb.forms::lang.form.tabs.details
+            trigger:
+                field: settings[redirect]
+                action: hide
+                condition: value[]
 
         settings:
-            tab: Settings
+            tab: sixgweb.forms::lang.form.tabs.settings
             type: nestedform
             showPanel: true
             form:
                 secondaryTabs:
                     icons:
-                        Submitting: bi bi-cloud-arrow-up
-                        Saving: bi bi-save
-                        Throttling: bi bi-hourglass-bottom
+                        sixgweb.forms::lang.form.tabs.submitting: bi bi-cloud-arrow-up
+                        sixgweb.forms::lang.form.tabs.saving: bi bi-save
+                        sixgweb.forms::lang.form.tabs.throttling: bi bi-hourglass-bottom
+                        
                     fields:
                         redirect:
-                            label: Submission Redirect URL
-                            comment: URL (Absolute/Relative) to redirect to after submission.  Leave blank to show form confirmation message.
-                            tab: Submitting
+                            label: sixgweb.forms::lang.form.redirect_url
+                            comment: sixgweb.forms::lang.form.redirect_url_description
+                            tab: sixgweb.forms::lang.form.tabs.submitting
+                            type: pagefinder
 
                         save_entries:
-                            label: Save Entries
+                            label: sixgweb.forms::lang.form.save_entries
                             type: switch
-                            tab: Saving
-                            comment: Save form entries to database
+                            tab: sixgweb.forms::lang.form.tabs.saving
+                            comment: sixgweb.forms::lang.form.save_entries_description
                         
                         purge_entries:
-                            label: Purge Entries
+                            label: sixgweb.forms::lang.form.purge_entries
                             type: switch
-                            tab: Saving
-                            comment: Remove entries from the database, after a certain number of days.
+                            tab: sixgweb.forms::lang.form.tabs.saving
+                            comment: sixgweb.forms::lang.form.purge_entries_description
+                            dependsOn: save_entries
+                            trigger:
+                                field: save_entries
+                                condition: checked
+                                action: show
 
                         purge_days:
-                            label: Days to Keep Entries
+                            label: sixgweb.forms::lang.form.purge_days
                             type: number
-                            tab: Saving
-                            comment: Number of days to keep entries in the database.  Older entries will be deleted. Minimum 1
+                            tab: sixgweb.forms::lang.form.tabs.saving
+                            comment: sixgweb.forms::lang.form.purge_days_description
                             default: 7
                             min: 1
+                            dependsOn: purge_entries
                             trigger:
                                 field: purge_entries
                                 condition: checked
                                 action: show
 
                         throttle_entries:
-                            label: Throttle Entries
+                            label: sixgweb.forms::lang.form.throttle_entries
                             type: switch
-                            tab: Throttling
-                            comment: Force the visitor to wait before submitting the form again.
-
-                        throttle_timeout:
-                            label: Throttle Timeout
-                            type: number
-                            comment: Seconds required before form can be submitted again.
-                            default: 3600
-                            tab: Throttling
-                            trigger:
-                                field: throttle_entries
-                                condition: checked
-                                action: show
+                            tab: sixgweb.forms::lang.form.tabs.throttling
+                            comment: sixgweb.forms::lang.form.throttle_entries_description
                             
-                        throttle_threshold:
-                            label: Throttle Threshold
+                        throttle_count:
+                            label: sixgweb.forms::lang.form.throttle_count
                             type: number
-                            comment: Number of submissions allowed before timeout enforced
-                            tab: Throttling
+                            comment: sixgweb.forms::lang.form.throttle_count_description
+                            tab: sixgweb.forms::lang.form.tabs.throttling
                             default: 1
+                            span: row
+                            cssClass: col-sm-4
                             trigger:
                                 field: throttle_entries
                                 condition: checked
                                 action: show
+
+                        throttle_time_period:
+                            label: sixgweb.forms::lang.form.throttle_time_period
+                            type: number
+                            comment: sixgweb.forms::lang.form.throttle_time_period_description
+                            tab: sixgweb.forms::lang.form.tabs.throttling
+                            default: 10
+                            span: row
+                            cssClass: col-sm-4
+                            trigger:
+                                field: throttle_entries
+                                condition: checked
+                                action: show
+
+                        throttle_time_period_unit:
+                            label: sixgweb.forms::lang.form.throttle_time_period_unit
+                            type: dropdown
+                            comment: sixgweb.forms::lang.form.throttle_time_period_unit_description
+                            tab: sixgweb.forms::lang.form.tabs.throttling
+                            default: minutes
+                            span: row
+                            cssClass: col-sm-4
+                            options:
+                                seconds: sixgweb.forms::lang.form.options.seconds
+                                minutes: sixgweb.forms::lang.form.options.minutes
+                                hours: sixgweb.forms::lang.form.options.hours
+                                days: sixgweb.forms::lang.form.options.days
+                            trigger:
+                                field: throttle_entries
+                                condition: checked
+                                action: show
+
+                        throttle_ip:
+                            label: sixgweb.forms::lang.form.throttle_ip
+                            type: switch
+                            tab: sixgweb.forms::lang.form.tabs.throttling
+                            comment: sixgweb.forms::lang.form.throttle_ip_description
+                            trigger:
+                                field: throttle_entries
+                                condition: checked
+                                action: show
+
         _fields_hint:
             type: hint
             mode: info

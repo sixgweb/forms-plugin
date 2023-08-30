@@ -35,9 +35,9 @@ class Plugin extends PluginBase
     {
         return [
             'name'        => 'Forms',
-            'description' => 'No description provided yet...',
+            'description' => 'Create forms and collect entries',
             'author'      => 'Sixgweb',
-            'icon'        => 'icon-form'
+            'icon'        => 'icon-file-text'
         ];
     }
 
@@ -127,21 +127,21 @@ class Plugin extends PluginBase
             'forms' => [
                 'label'       => 'Forms',
                 'url'         => Backend::url('sixgweb/forms/forms'),
-                'icon'        => 'icon-file',
+                'icon'        => 'bi-file-earmark-code',
                 'permissions' => ['sixgweb.forms.*'],
                 'order'       => 500,
                 'sideMenu' => [
                     'forms' => [
                         'label'       => 'Forms',
                         'url'         => Backend::url('sixgweb/forms/forms'),
-                        'icon'        => 'icon-file',
+                        'icon'        => 'bi-file-earmark-code',
                         'permissions' => ['sixgweb.forms.manage_forms'],
                         'order'       => 100,
                     ],
                     'entries' => [
                         'label'       => 'Entries',
                         'url'         => Backend::url('sixgweb/forms/entries'),
-                        'icon'        => 'icon-file-text',
+                        'icon'        => 'bi-file-earmark-text',
                         'permissions' => ['sixgweb.forms.manage_entries'],
                         'order'       => 200,
                     ],

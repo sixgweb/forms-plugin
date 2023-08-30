@@ -17,3 +17,6 @@
   - Move attributize/conditions integrations to forms plugin
 1.0.7:
   - Automatically add fields component and inherit field component properties in entry component
+1.0.8:
+  - Add IP Address to entries table
+  - add_ip_address_to_entries_table.php

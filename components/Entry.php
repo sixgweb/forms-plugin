@@ -3,25 +3,36 @@
 namespace Sixgweb\Forms\Components;
 
 use Auth;
-use Queue;
 use Event;
 use Session;
+use Request;
 use Redirect;
 use Cms\Classes\ComponentBase;
 use Sixgweb\Forms\Models\Form;
+use Illuminate\Support\Facades\RateLimiter;
 use Sixgweb\Forms\Models\Entry as EntryModel;
-use Sixgweb\Conditions\Classes\ConditionersManager;
+
 
 /**
  * Form Component
  */
 class Entry extends ComponentBase
 {
+    const LIMITER_KEY_PREFIX = 'sixgweb.forms.entry';
+
     protected $form;
     protected $entry;
+    protected $rateLimiterKey;
+    protected $rateLimiterSeconds;
     protected $entryFields;
 
-    public function componentDetails()
+
+    /**
+     * Component Details
+     *
+     * @return array
+     */
+    public function componentDetails(): array
     {
         return [
             'name' => 'Entry Component',
@@ -29,7 +40,12 @@ class Entry extends ComponentBase
         ];
     }
 
-    public function defineProperties()
+    /**
+     * Prepend properties to Attributize Fields component properties
+     *
+     * @return array
+     */
+    public function defineProperties(): array
     {
         $fields = new \Sixgweb\Attributize\Components\Fields;
         return [
@@ -41,7 +57,12 @@ class Entry extends ComponentBase
         ] + $fields->defineProperties();
     }
 
-    public function init()
+    /**
+     * Initialize component
+     *
+     * @return void
+     */
+    public function init(): void
     {
         $this->prepareVars();
         $this->entryFields = $this->addComponent(
@@ -54,16 +75,27 @@ class Entry extends ComponentBase
     }
 
     /**
+     * Prepare partial variables
+     *
+     * @return void
+     */
+    public function prepareVars(): void
+    {
+        $this->page['user'] = Auth::getUser();
+        $this->form = $this->page['form'] = $this->getForm();
+        $this->rateLimiterKey = $this->getRateLimiterKey();
+        $this->page['entry'] = $this->getEntry();
+        $this->page['timeout'] = $this->getTimeout();
+        $this->page->title = $this->page['form']['name'] ?? 'Form Not Found';
+    }
+
+    /**
      * Workaround since OCMS doesn't use methodExists in onInspectableGetOptions
      *
      * @return array
      */
     public function getCodesOptions(): array
     {
-        if ($form = $this->getForm()) {
-            //ConditionersManager::instance()->addConditioner($form);
-        }
-
         $entry = new EntryModel;
         $fields = $entry->getFieldableFields();
         return $fields->pluck('name', 'code')->toArray();
@@ -76,79 +108,47 @@ class Entry extends ComponentBase
      */
     public function getTabsOptions(): array
     {
-        if ($form = $this->getForm()) {
-            //ConditionersManager::instance()->addConditioner($form);
-        }
-
         $entry = new EntryModel;
         $fields = $entry->getFieldableFields();
         return $fields->pluck('tab', 'tab')->toArray();
     }
 
-
-    public function getEntryComponentAlias()
-    {
-        if ($this->entryComponentAlias) {
-            return $this->entryComponentAlias;
-        }
-
-        if ($component = $this->controller->findComponentByHandler('onRefreshAttributizeFields')) {
-            $this->entryComponentAlias = $component->alias;
-        } else {
-            $this->entryComponentAlias = 'entryFields';
-        }
-
-        return $this->entryComponentAlias;
-    }
-
-    public function prepareVars()
-    {
-        $this->page['user'] = Auth::getUser();
-        $this->page['form'] = $this->getForm();
-        $this->page['entry'] = $this->getEntry();
-        $this->page['timeout'] = $this->getTimeout();
-        $this->page->title = $this->page['form']['name'] ?? 'Form Not Found';
-    }
-
-    public function onRefreshForm()
-    {
-        return $this->renderPartial('::form');
-    }
-
-    public function onEntry()
+    /**
+     * Ajax handler for entry creation
+     *
+     * @return mixed
+     */
+    public function onEntry(): ?array
     {
         if ($this->getTimeout()) {
-            return;
+            return null;
         }
 
         $data = post();
         $data['form_id'] = $this->form->id;
+        $data['ip_address'] = Request::ip();
         $entry = $this->getEntry();
         $entry->fill($data);
 
         if (!$entry->validate()) {
-            return false;
+            return null;
         }
 
-        Event::fire('sixgweb.forms.beforeEntry', [$entry]);
+        Event::fire('sixgweb.forms.entry.beforeSave', [$entry]);
 
         $entry->save();
 
-        $key = 'sixgweb.forms.' . $this->form->id;
-        $count = Session::get($key . '.entries', 0);
-        Session::put($key . '.entries', $count + 1);
-        Session::put($key . '.time', time());
+        RateLimiter::hit($this->rateLimiterKey, $this->getThrottleTimeoutSeconds());
 
-        if ($entry->id) {
-            Event::fire('sixgweb.forms.afterEntry', [$entry]);
-        }
+        Event::fire('sixgweb.forms.entry.afterSave', [$entry]);
 
         /**
          * Notify requires an existing model to process.
-         * Instead of conditionally saving, we'll conditionally delete.
+         * Instead of conditionally saving, we'll conditionally delete and decrement the ID.
          */
         if (!$this->form->settings['save_entries']) {
             $entry->delete();
+            $entry->decrement('id');
         }
 
         if ($this->form->settings['redirect'] ?? null) {
@@ -158,63 +158,110 @@ class Entry extends ComponentBase
         return ['#' . $this->getFormContainerId() => $this->form->confirmation];
     }
 
-    public function forms()
-    {
-        return Form::enabled()->orderBy('name', 'asc')->get();
-    }
-
-    public function getForm()
+    /**
+     * Get Form Model
+     *
+     * @return Form|null
+     */
+    public function getForm(): ?Form
     {
         $slug = $this->property('form');
 
-        //If no Forms found, fall back to false.  Otherwise, memoization if pointless on null.
+        //If no Forms found, fall back to false.  Otherwise, memoization is pointless on null.
         return $this->form ?? $this->form = Form::where('slug', $slug)->enabled()->first() ?? false;
     }
 
-    public function getEntry()
+    public function getRateLimiterKey()
     {
-        $form = $this->getForm();
+        $fallback = $this->form->settings['throttle_ip']
+            ? Request::ip()
+            : Session::getId();
+
+        $limiterKey  = [
+            self::LIMITER_KEY_PREFIX,
+            $this->form->id ?? null,
+            Auth::id() ?? $fallback
+        ];
+
+        return implode('.', $limiterKey);
+    }
+
+    /**
+     * Get the Entry Model
+     *
+     * @return EntryModel|null
+     */
+    public function getEntry(): ?EntryModel
+    {
         return $this->entry ?? $this->entry = new EntryModel([
-            'form_id' => $form->id ?? null,
+            'form_id' => $this->form->id ?? null,
         ]);
     }
 
-    public function getTimeout()
+    /**
+     * Get form throttle timeout in seconds
+     *
+     * @return integer|null
+     */
+    public function getTimeout(): ?int
     {
-        if (!$form = $this->getForm()) {
-            return;
+        if (!$this->form) {
+            return null;
         }
 
-        $seconds = $form->settings['throttle_timeout'];
-        $threshold = $form->settings['throttle_threshold'];
-
-        if (!$form->settings['throttle_entries'] || !$seconds || !$threshold) {
-            Session::forget('sixgweb.forms.' . $form->id);
-            return false;
+        //Throttling disabled.  Clear RateLimiter, if previous value.
+        if (!$this->form->settings['throttle_entries']) {
+            RateLimiter::clear($this->rateLimiterKey);
+            return null;
         }
 
-        if (!$session = Session::get('sixgweb.forms.' . $form->id)) {
-            return false;
+        $allowed = $this->form->settings['throttle_count'] ?? null;
+        $seconds = $this->getThrottleTimeoutSeconds();
+
+        if (RateLimiter::remaining($this->rateLimiterKey, $allowed, $seconds)) {
+            return null;
         }
 
-        if ($session['entries'] >= $threshold) {
-            if ($seconds <= (time() - $session['time'])) {
-                Session::forget('sixgweb.forms.' . $form->id);
-            } else {
-                return $seconds - (time() - $session['time']);
-            }
-        }
-
-        return false;
+        return RateLimiter::availableIn($this->rateLimiterKey);
     }
 
-    public function getEntryContainerId()
+    public function getEntryContainerId(): string
     {
         return $this->alias . 'EntryContainer';
     }
 
-    public function getFormContainerId()
+    public function getFormContainerId(): string
     {
         return $this->alias . 'FormContainer';
+    }
+
+    private function getThrottleTimeoutSeconds(): int
+    {
+        if ($this->rateLimiterSeconds) {
+            return $this->rateLimiterSeconds;
+        }
+
+        $number = $this->form->settings['throttle_time_period'];
+        $type = $this->form->settings['throttle_time_period_unit'];
+        $seconds = 0;
+
+        switch ($type) {
+            case 'seconds':
+                $seconds = $number;
+                break;
+            case 'minutes':
+                $seconds = $number * 60;
+                break;
+            case 'hours':
+                $seconds = ($number * 60) * 60;
+                break;
+            case 'days':
+                $seconds =  (($number * 60) * 60) * 24;
+                break;
+        }
+
+        $this->rateLimiterSeconds = $seconds;
+
+        return $seconds;
     }
 }

@@ -28,6 +28,7 @@ class Entry extends Model
      */
     protected $fillable = [
         'form_id',
+        'ip_address',
     ];
 
     protected $purgeable = [];
