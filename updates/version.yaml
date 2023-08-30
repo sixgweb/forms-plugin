@@ -24,3 +24,5 @@
   - Remove Attributize/Conditions from composer.json
 1.0.10:
   - Add check for attributize/conditions event listeners
+1.0.11:
+  - Add license to composer.json
