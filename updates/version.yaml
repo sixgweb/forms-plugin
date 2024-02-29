@@ -28,3 +28,5 @@
   - Add license to composer.json
 1.0.12:
   - Update boot class exists check
+1.0.13:
+  - Add getGroupIcon method to support conditions repeater group icons.

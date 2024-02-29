@@ -39,4 +39,9 @@ class ConditionerEventHandler extends AbstractConditionerEventHandler
     {
         return 'Form';
     }
+
+    protected function getGroupIcon(): string
+    {
+        return 'bi-file-code-fill';
+    }
 }
