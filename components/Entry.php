@@ -81,8 +81,11 @@ class Entry extends ComponentBase
      */
     public function prepareVars(): void
     {
-        $this->page['user'] = Auth::getUser();
         $this->form = $this->page['form'] = $this->getForm();
+        if (!$this->form) {
+            return;
+        }
+        $this->page['user'] = Auth::getUser();
         $this->rateLimiterKey = $this->getRateLimiterKey();
         $this->page['entry'] = $this->getEntry();
         $this->page['timeout'] = $this->getTimeout();
@@ -97,7 +100,7 @@ class Entry extends ComponentBase
     public function getCodesOptions(): array
     {
         $entry = new EntryModel;
-        $fields = $entry->getFieldableFields();
+        $fields = $entry->fieldableGetFields();
         return $fields->pluck('name', 'code')->toArray();
     }
 
@@ -109,7 +112,7 @@ class Entry extends ComponentBase
     public function getTabsOptions(): array
     {
         $entry = new EntryModel;
-        $fields = $entry->getFieldableFields();
+        $fields = $entry->fieldableGetFields();
         return $fields->pluck('tab', 'tab')->toArray();
     }
 
@@ -168,7 +171,7 @@ class Entry extends ComponentBase
         $slug = $this->property('form');
 
         //If no Forms found, fall back to false.  Otherwise, memoization is pointless on null.
-        return $this->form ?? $this->form = Form::where('slug', $slug)->enabled()->first() ?? false;
+        return $this->form ?? $this->form = Form::where('slug', $slug)->enabled()->first() ?? null;
     }
 
     public function getRateLimiterKey()

@@ -7,7 +7,7 @@
 
 <?php if (!$this->fatalError) : ?>
 
-    <div class="control-toolbar" data-control=" toolbar">
+    <div class="control-toolbar">
         <a href="<?= Backend::url('sixgweb/forms/entries/update/' . $formModel->id) ?>" class="btn btn-primary oc-icon-pencil">
             Edit Entry
         </a>

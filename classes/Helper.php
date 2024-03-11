@@ -6,7 +6,7 @@ class Helper
 {
     public static function entryFieldValuesToHTML($model, $options = [])
     {
-        $fields = $model->getFieldableFields();
+        $fields = $model->fieldableGetFields();
         $values = $options['field_values'] ?? $model->field_values;
 
         $c = $options['container'] ?? 'ul';

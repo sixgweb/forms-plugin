@@ -30,3 +30,5 @@
   - Update boot class exists check
 1.0.13:
   - Add getGroupIcon method to support conditions repeater group icons.
+1.0.14:
+  - Update dreprecated method call
