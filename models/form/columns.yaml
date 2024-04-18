@@ -22,8 +22,10 @@ columns:
         label: Purge Entries
         type: switch
 
-    entries_count:
+    entries_link:
         label: Entries
+        type: partial
+        path: $/sixgweb/forms/controllers/forms/_entries_link.htm
         relation: entries_count
         valueFrom: count
         default: 0

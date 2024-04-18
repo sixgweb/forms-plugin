@@ -32,3 +32,6 @@
   - Add getGroupIcon method to support conditions repeater group icons.
 1.0.14:
   - Update dreprecated method call
+1.0.15:
+  - Add direct link to entries with form filter preset from form list
+  
