@@ -8,6 +8,7 @@ use Session;
 use Request;
 use Redirect;
 use Cms\Classes\ComponentBase;
+use Illuminate\Http\RedirectResponse;
 use Sixgweb\Forms\Models\Form;
 use Illuminate\Support\Facades\RateLimiter;
 use Sixgweb\Forms\Models\Entry as EntryModel;
@@ -89,7 +90,6 @@ class Entry extends ComponentBase
         $this->rateLimiterKey = $this->getRateLimiterKey();
         $this->page['entry'] = $this->getEntry();
         $this->page['timeout'] = $this->getTimeout();
-        $this->page->title = $this->page['form']['name'] ?? 'Form Not Found';
     }
 
     /**
@@ -121,7 +121,7 @@ class Entry extends ComponentBase
      *
      * @return mixed
      */
-    public function onEntry(): ?array
+    public function onEntry(): array|RedirectResponse|null
     {
         if ($this->getTimeout()) {
             return null;
@@ -155,7 +155,8 @@ class Entry extends ComponentBase
         }
 
         if ($this->form->settings['redirect'] ?? null) {
-            return Redirect::to($this->form->settings['redirect']);
+            $url = \Cms\Classes\PageManager::url($this->form->settings['redirect']);
+            return Redirect::to($url);
         }
 
         return ['#' . $this->getFormContainerId() => $this->form->confirmation];

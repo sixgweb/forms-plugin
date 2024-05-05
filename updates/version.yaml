@@ -34,4 +34,6 @@
   - Update dreprecated method call
 1.0.15:
   - Add direct link to entries with form filter preset from form list
+1.0.16:
+  - Remove title override in component
   
