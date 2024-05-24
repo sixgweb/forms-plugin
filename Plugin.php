@@ -9,9 +9,7 @@ use System\Classes\PluginBase;
 use Sixgweb\Forms\Models\Form;
 use Sixgweb\Forms\Models\Entry;
 use Sixgweb\Forms\Classes\Helper;
-use Sixgweb\Forms\Controllers\Forms;
 use Sixgweb\Forms\Classes\EventHandler;
-use Sixgweb\Conditions\Classes\ConditionersManager;
 use Sixgweb\Forms\Classes\ConditionableEventHandler;
 use Sixgweb\Forms\Classes\ConditionerEventHandler;
 
@@ -24,6 +22,7 @@ class Plugin extends PluginBase
     public $require = [
         'Sixgweb.Attributize',
         'Sixgweb.Conditions',
+        'Sixgweb.ConditionsAttributize',
     ];
 
     /**
