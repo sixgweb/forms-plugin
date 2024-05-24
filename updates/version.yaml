@@ -38,4 +38,5 @@
   - Remove title override in component
 1.0.17:
   - Add conditionsattributize as required plugin
-  
+1.0.18:
+  - Check if Auth class exists in component

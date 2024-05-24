@@ -86,7 +86,9 @@ class Entry extends ComponentBase
         if (!$this->form) {
             return;
         }
-        $this->page['user'] = Auth::getUser();
+        if (class_exists('Auth')) {
+            $this->page['user'] = Auth::getUser();
+        }
         $this->rateLimiterKey = $this->getRateLimiterKey();
         $this->page['entry'] = $this->getEntry();
         $this->page['timeout'] = $this->getTimeout();
@@ -177,14 +179,18 @@ class Entry extends ComponentBase
 
     public function getRateLimiterKey()
     {
-        $fallback = $this->form->settings['throttle_ip']
+        $key = $this->form->settings['throttle_ip']
             ? Request::ip()
             : Session::getId();
+
+        if (class_exists('Auth')) {
+            $key = Auth::id() ?? $key;
+        }
 
         $limiterKey  = [
             self::LIMITER_KEY_PREFIX,
             $this->form->id ?? null,
-            Auth::id() ?? $fallback
+            $key
         ];
 
         return implode('.', $limiterKey);
