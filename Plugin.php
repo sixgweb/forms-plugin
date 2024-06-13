@@ -74,6 +74,18 @@ class Plugin extends PluginBase
     }
 
     /**
+     * Register page snippets
+     *
+     * @return array
+     */
+    public function registerPageSnippets(): array
+    {
+        return [
+            'Sixgweb\Forms\Components\Entry' => 'formsEntry',
+        ];
+    }
+
+    /**
      * Registers any backend permissions used by this plugin.
      *
      * @return array

@@ -37,7 +37,8 @@ class Entry extends ComponentBase
     {
         return [
             'name' => 'Entry Component',
-            'description' => 'No description provided yet...'
+            'description' => 'No description provided yet...',
+            'snippetAjax' => true,
         ];
     }
 
@@ -115,7 +116,7 @@ class Entry extends ComponentBase
     {
         $entry = new EntryModel;
         $fields = $entry->fieldableGetFields();
-        return $fields->pluck('tab', 'tab')->toArray();
+        return array_filter($fields->pluck('tab', 'tab')->toArray());
     }
 
     /**
