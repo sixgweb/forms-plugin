@@ -42,3 +42,5 @@
   - Check if Auth class exists in component
 1.0.19:
   - Snippets support
+1.0.20:
+  - Update requirements information to include requirements of dependencies
