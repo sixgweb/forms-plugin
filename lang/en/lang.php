@@ -8,6 +8,7 @@ return [
             'submitting' => 'Submitting',
             'saving' => 'Saving',
             'throttling' => 'Throttling',
+            'notifying' => 'Notifying',
         ],
         'options' => [
             'seconds' => 'Seconds',
@@ -39,5 +40,12 @@ return [
         'throttle_time_period_unit_description' => 'Unit of time used for the time period value',
         'throttle_ip' => 'Throttle by IP Address',
         'throttle_ip_description' => 'Throttle entries by IP address, instead of session ID.  If user is logged in, throttling is done by user ID regardless of this setting',
+        'send_notifications' => 'Send Notifications',
+        'send_notifications_description' => 'Send notifications via email',
+        'emails' => 'Email Addresses',
+        'emails_description' => 'Email addresses to send notifications to',
+        'email_subject' => 'Email Subject',
+        'email_layout' => 'Email Layout',
+        'email_content' => 'Email Content',
     ]
 ];

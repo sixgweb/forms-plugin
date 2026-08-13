@@ -45,9 +45,7 @@ class Plugin extends PluginBase
      *
      * @return void
      */
-    public function register()
-    {
-    }
+    public function register() {}
 
     /**
      * Boot method, called right before the request route.
@@ -70,6 +68,7 @@ class Plugin extends PluginBase
     {
         return [
             'Sixgweb\Forms\Components\Entry' => 'formsEntry',
+            'Sixgweb\Forms\Components\Entries' => 'formsEntries',
         ];
     }
 
@@ -174,6 +173,13 @@ class Plugin extends PluginBase
             'functions' => [
                 'entryFieldValuesToHTML' => [Helper::class, 'entryFieldValuesToHTML'],
             ],
+        ];
+    }
+
+    public function registerMailTemplates(): array
+    {
+        return [
+            'sixgweb.forms::mail.entry',
         ];
     }
 

@@ -2,7 +2,11 @@
 
 namespace Sixgweb\Forms\Models;
 
+use View;
 use Model;
+use File as FileHelper;
+use Backend\Models\User as BackendUser;
+use System\Models\MailTemplate;
 
 /**
  * Form Model
@@ -130,5 +134,20 @@ class Form extends Model
             $purgeEntries = post($fields->purge_entries->getName(), $fields->purge_entries->value);
             $fields->purge_days->disabled = $purgeEntries == 0;
         }
+
+        if (isset($fields->send_notifications)) {
+            //$fields->email_content->value = FileHelper::get(View::make('sixgweb.forms::mail.entry')->getPath());
+            $fields->email_content->value = $fields->email_content->value ?? MailTemplate::findOrMakeTemplate('sixgweb.forms::mail.entry')->content_html;
+        }
+    }
+
+    public function getBackendUserOptions()
+    {
+        return BackendUser::all()->pluck('email', 'email')->toArray();
+    }
+
+    public function getEmailLayoutOptions()
+    {
+        return \System\Models\MailLayout::lists('code', 'name');
     }
 }

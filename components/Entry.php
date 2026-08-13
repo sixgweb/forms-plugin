@@ -3,6 +3,7 @@
 namespace Sixgweb\Forms\Components;
 
 use Auth;
+use Mail;
 use Event;
 use Session;
 use Request;
@@ -37,7 +38,7 @@ class Entry extends ComponentBase
     {
         return [
             'name' => 'Entry Component',
-            'description' => 'No description provided yet...',
+            'description' => 'Form entry component',
             'snippetAjax' => true,
         ];
     }
@@ -147,6 +148,10 @@ class Entry extends ComponentBase
         RateLimiter::hit($this->rateLimiterKey, $this->getThrottleTimeoutSeconds());
 
         Event::fire('sixgweb.forms.entry.afterSave', [$entry]);
+
+        if ($this->form->settings['send_notifications'] ?? null) {
+            $this->sendEntryNotification($entry);
+        }
 
         /**
          * Notify requires an existing model to process.
@@ -274,5 +279,24 @@ class Entry extends ComponentBase
         $this->rateLimiterSeconds = $seconds;
 
         return $seconds;
+    }
+
+    private function sendEntryNotification($entry)
+    {
+        $recipients = $this->form->settings['emails'] ?? null;
+        $subject = $this->form->settings['email_subject'] ?? null;
+        $layout = $this->form->settings['email_layout'] ?? null;
+        $content = $this->form->settings['email_content'] ?? null;
+
+        if (!$recipients || !$subject || !$content) {
+            return;
+        }
+
+        foreach ($recipients as $recipient) {
+            Mail::send(['raw' => $content], ['entry' => $entry], function ($message) use ($recipient, $subject, $layout) {
+                $message->to($recipient);
+                $message->subject($subject);
+            });
+        }
     }
 }

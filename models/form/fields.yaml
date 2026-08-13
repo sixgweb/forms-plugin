@@ -47,6 +47,7 @@ tabs:
                         sixgweb.forms::lang.form.tabs.submitting: bi bi-cloud-arrow-up
                         sixgweb.forms::lang.form.tabs.saving: bi bi-save
                         sixgweb.forms::lang.form.tabs.throttling: bi bi-hourglass-bottom
+                        sixgweb.forms::lang.form.tabs.notifying: bi bi-bell
                         
                     fields:
                         redirect:
@@ -144,6 +145,59 @@ tabs:
                                 field: throttle_entries
                                 condition: checked
                                 action: show
+
+                        send_notifications:
+                            label: sixgweb.forms::lang.form.send_notifications
+                            type: switch
+                            tab: sixgweb.forms::lang.form.tabs.notifying
+                            comment: sixgweb.forms::lang.form.send_notifications_description
+
+                        emails:
+                            label: sixgweb.forms::lang.form.emails
+                            type: taglist
+                            mode: array
+                            optionsMethod: getBackendUserOptions
+                            useKey: true
+                            customTags: true
+                            tab: sixgweb.forms::lang.form.tabs.notifying
+                            comment: sixgweb.forms::lang.form.emails_description
+                            dependsOn: send_notifications
+                            trigger:
+                                field: send_notifications
+                                condition: checked
+                                action: show
+
+                        email_subject:
+                            label: sixgweb.forms::lang.form.email_subject
+                            type: text
+                            tab: sixgweb.forms::lang.form.tabs.notifying
+                            dependsOn: send_notifications
+                            trigger:
+                                field: send_notifications
+                                condition: checked
+                                action: show
+
+                        email_layout:
+                            label: sixgweb.forms::lang.form.email_layout
+                            type: dropdown
+                            tab: sixgweb.forms::lang.form.tabs.notifying
+                            optionsMethod: getEmailLayoutOptions
+                            dependsOn: send_notifications
+                            trigger:
+                                field: send_notifications
+                                condition: checked
+                                action: show
+
+                        email_content:
+                            label: sixgweb.forms::lang.form.email_content
+                            type: markdown
+                            tab: sixgweb.forms::lang.form.tabs.notifying
+                            dependsOn: send_notifications
+                            trigger:
+                                field: send_notifications
+                                condition: checked
+                                action: show
+                        
 
         _fields_hint:
             type: hint

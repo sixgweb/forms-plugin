@@ -7,7 +7,7 @@ use System\Controllers\Settings as SettingsController;
 
 
 /**
- * Memberships Settings Controller
+ * Forms Settings Controller
  */
 class Settings extends SettingsController
 {

@@ -1,0 +1,10 @@
+subject = "New {{ entry.form.name }} Entry Created"
+layout = "default"
+description = "Send notification of new form entry"
+==
+
+<p>Hi,</p>
+
+<p>A new <strong>{{ entry.form.name }}</strong> entry has been submitted.  Below is the entry data:</p>
+
+{{ entryFieldValuesToHTML(entry)|raw }}
